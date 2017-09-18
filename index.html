@@ -4,7 +4,7 @@
         <meta charset="utf-8" />
         
         <h1 id="UserHeader"></h1>
-        <title>Community Disperser!</title>
+        <title>DreamScape</title>
         <ul id="UserSteemData"><h1>User Information:</h1></ul>
         <h1 id="NodeData"></h1>
         <center>
@@ -36,7 +36,7 @@
         <script src="./muse.min.js"></script>
 
         <script src="./bitsharesjs.min.js"></script>
-	
+    
 
     </head>
  
@@ -57,11 +57,12 @@
         <script>
 
             // The username and activekey is requested, stored in the var username and displayed in the title
-            var username = prompt('What\'s your username?');
+            
+            var username = null;
 
             //steem activekey is requested and stored in var activekey this means it is only local cache and when this page is cache cleared the activekey is gone.
             
-            var activekey = prompt('What\'s your active key?');
+            var activekey = null;
             
             document.title = username + ' - ' + document.title;
 
@@ -73,11 +74,19 @@
 
             //Ping the node for the latest block, this help verify connectivity.
 
-            steem.api.streamBlockAsync(function(err, t) {
-                $('#NodeData').replaceWith("<p id='NodeData'>Current block time is: " + t.timestamp + " The Node you are on is: wss://steemd.steemit.com" + "</p>");
+            muse.api.streamBlockAsync(function(err, t) {
+                $('#NodeData').replaceWith("<p id='NodeData'>Current block time is: " + t.timestamp + "</p>");
             })
 
             //Check the steem username provided and pull its info if it is real, otherwise drop and error on the screen about it.
+
+            steem.api.getConfig(function(err, response){
+                console.log(err, response);
+            });
+
+            muse.api.getConfig(function(err, response){
+                console.log(err, response);
+            });
 
 
             steem.api.getAccounts([username], function(err, response){
@@ -146,8 +155,8 @@
                         if(lookupresult[0] != null ) {
                             
                             steem.broadcast.transfer(activekey, username, value, amount.concat(TOKEN), memo, function(err, transferresult) 
-                            {	
-				console.log(activekey, username, value, amount.concat(TOKEN), memo);
+                            {   
+                console.log(activekey, username, value, amount.concat(TOKEN), memo);
                                 console.log(transferresult, err);
 
                                 //drop all of the info on each transaction into the window so that we can see the results.
