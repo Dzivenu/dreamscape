@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        
+        <h1 id="UserHeader"></h1>
+        <title>Community Disperser!</title>
+        <ul id="UserSteemData"><h1>User Information:</h1></ul>
+        <h1 id="NodeData"></h1>
+        <center>
+        <style>
+            #result_zone strong {
+                color: white;
+                background-color: black;
+                padding: 2px;
+            }
+            body {
+                border-style: double;
+
+            }
+            #credits {
+                color: white;
+                background-color: green;
+                margin: 5px;
+            }
+            #NodeData {
+                margin: 20px;
+                background-color: green;
+            }
+        </style>
+
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+
+        <script src="https://cdn.steemjs.com/lib/latest/steem.min.js"></script>
+
+        <script src="./muse.min.js"></script>
+
+        <script src="./bitsharesjs.min.js"></script>
+	
+
+    </head>
+ 
+    <body>
+
+        <form action="/" method="post" id="userlist_form">
+            <input type="text" name="message" id="message" placeholder="Something..." size="50" autofocus />
+            
+        </form>
+
+        <section id="result_zone">
+            
+        </section>
+    </center>
+    <br/>
+    <br/>
+    <p id="credits">Big appreciation to Fabien @adcpm for the steem js library: https://www.npmjs.com/package/steem</p>
+        <script>
+
+            // The username and activekey is requested, stored in the var username and displayed in the title
+            var username = prompt('What\'s your username?');
+
+            //steem activekey is requested and stored in var activekey this means it is only local cache and when this page is cache cleared the activekey is gone.
+            
+            var activekey = prompt('What\'s your active key?');
+            
+            document.title = username + ' - ' + document.title;
+
+            //Set the websocket to be used for the script.
+
+            steem.config.set('websocket','wss://steemd.steemit.com');
+            muse.config.set('websocket','wss://api.muse.blckchnd.com');
+            //bitshares_js.config.set('websocket','wss://bitshares.openledger.info/ws');
+
+            //Ping the node for the latest block, this help verify connectivity.
+
+            steem.api.streamBlockAsync(function(err, t) {
+                $('#NodeData').replaceWith("<p id='NodeData'>Current block time is: " + t.timestamp + " The Node you are on is: wss://steemd.steemit.com" + "</p>");
+            })
+
+            //Check the steem username provided and pull its info if it is real, otherwise drop and error on the screen about it.
+
+
+            steem.api.getAccounts([username], function(err, response){
+
+                if(response[0] != null) {
+                    $('#UserSteemData').append('<li>' + "Username: " + response[0].name + '</li>');
+                    $('#UserSteemData').append('<li>' + "Memo Key: " + response[0].memo_key + '</li>');
+                    $('#UserSteemData').append('<li>' + "Steem Balance: " + response[0].balance + '</li>');
+                }
+                else {
+                    $('#result_zone').prepend('<p><em>' + "That is not a valid username, please use your steem username. " + err + '</em></p>');
+                };
+            });
+
+            
+            
+            // When the form is fired, the results are validated and then displayed on the page.
+            $('#userlist_form').submit(function () {
+
+                //Message is the list of users that will be sent to, it is a comma seperated list with no spaces.
+
+                var message = $('#message').val();
+
+                //amount is the amount of steem to send to every user.
+
+                var amount = $('#amount').val();
+
+                //memo is the message to attach to the transaction.
+
+                var memo = $('#memo').val();
+
+                //because it is possible to send both sbd and steem we need to specify that we want to send steem in the transaction.
+
+                var TOKEN = " STEEM";
+
+                //here we display on the screen all of the input that was just fired in an uncompressed format.
+
+                //this is likely extreneous and can be removed in the future, but it is good for debugging for the time being.
+
+
+                insertMessage(username, message, amount, memo);
+                // Empties the input forms and puts the focus back on the message input field.
+                $('#amount').val('');
+                $('#memo').val('');
+                $('#message').val('').focus(); 
+
+                //here we set up our list of users and split it based on the commas.
+
+                var userdispersallist = message.split(',');
+
+                //here we iterate over the list of users and perform our needed ops.
+                
+                $.each(userdispersallist, function (index, value){
+                    /*steem.broadcast.transfer(activekey, username, "steemstars-gtc", "1.000 STEEM", "testing", function(err,   result) {
+                    console.log(err, result);
+                    });*/
+
+                    //first we need to check if each of these user name are real steem usernames and if they are not feed back what ones are not.
+
+                    steem.api.lookupAccountNames([value], function(err, lookupresult) {
+
+                        console.log(err, lookupresult);
+
+                        //once we get a response on the user we can move on and fire the transaction.
+                        
+                        if(lookupresult[0] != null ) {
+                            
+                            steem.broadcast.transfer(activekey, username, value, amount.concat(TOKEN), memo, function(err, transferresult) 
+                            {	
+				console.log(activekey, username, value, amount.concat(TOKEN), memo);
+                                console.log(transferresult, err);
+
+                                //drop all of the info on each transaction into the window so that we can see the results.
+                                
+                                $('#result_zone').prepend('<p><em>' + value + " " + transferresult + err + '</em></p>');
+                            });
+                        }
+                        else{
+                            $('#result_zone').prepend('<p><em>' + "Something went wrong, likely this username is not real: " + value + err + '</em></p>');
+                        };
+                    });
+                });
+                 // Blocks 'classic' sending of the form
+                return false;
+            });
+            
+            
+
+             //Adds a message to the page
+            function insertMessage(username, message, amount, memo) {
+                $('#result_zone').prepend('<p><strong>' + username + '</strong> ' + message + " " + amount + " " + memo + '</p>');
+            };
+
+            
+        </script>
+    </body>
+</html>
