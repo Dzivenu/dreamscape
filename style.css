@@ -1,0 +1,21 @@
+#result_zone strong {
+    color: white;
+    background-color: black;
+    padding: 2px;
+}
+body {
+    border-style: double;
+
+}
+#credits {
+    color: white;
+    background-color: green;
+    margin: 5px;
+}
+#NodeData {
+    margin: 20px;
+    background-color: green;
+}
+img {
+    width:50px;
+}

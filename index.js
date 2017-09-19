@@ -14,8 +14,8 @@
         </table>
     </div>
 
-    <script type="text/javascript" src="tpl/bitsharesjs-ws.js"></script>
-    <script type="text/javascript" src="tpl/bitsharesjs.js"></script>
+    <script type="text/javascript" src="./bitsharesjs-ws.js"></script>
+    <script type="text/javascript" src="./bitsharesjs.js"></script>
     <script type="text/javascript">
         import {Apis} from "bitsharesjs-ws";
         import {ChainStore} from "../lib";

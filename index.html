@@ -2,32 +2,24 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        
+        <link rel="stylesheet" href="style.css">
+
+        <div style="text-align: left">
+            <center>
+            <h1>DreamScape</h1>
+            <h3>Decentralize Everything</h3>
+            <img src="./artemis.png"></img>
+            </center>
+        </div>
+            
         <h1 id="UserHeader"></h1>
         <title>DreamScape</title>
+
         <ul id="UserSteemData"><h1>User Information:</h1></ul>
         <h1 id="NodeData"></h1>
         <center>
-        <style>
-            #result_zone strong {
-                color: white;
-                background-color: black;
-                padding: 2px;
-            }
-            body {
-                border-style: double;
-
-            }
-            #credits {
-                color: white;
-                background-color: green;
-                margin: 5px;
-            }
-            #NodeData {
-                margin: 20px;
-                background-color: green;
-            }
-        </style>
+        
+        
 
         <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 
@@ -41,7 +33,7 @@
     </head>
  
     <body>
-
+        
         <form action="/" method="post" id="userlist_form">
             <input type="text" name="message" id="message" placeholder="Something..." size="50" autofocus />
             
@@ -58,7 +50,7 @@
 
             // The username and activekey is requested, stored in the var username and displayed in the title
             
-            var username = null;
+            var username = prompt('What is your witness account?');
 
             //steem activekey is requested and stored in var activekey this means it is only local cache and when this page is cache cleared the activekey is gone.
             
@@ -89,16 +81,30 @@
             });
 
 
-            steem.api.getAccounts([username], function(err, response){
+            muse.api.getAccounts([username], function(err, response){
 
                 if(response[0] != null) {
                     $('#UserSteemData').append('<li>' + "Username: " + response[0].name + '</li>');
                     $('#UserSteemData').append('<li>' + "Memo Key: " + response[0].memo_key + '</li>');
-                    $('#UserSteemData').append('<li>' + "Steem Balance: " + response[0].balance + '</li>');
+                    $('#UserSteemData').append('<li>' + "Muse Balance: " + response[0].balance + '</li>');
+                    $('#UserSteemData').append('<li>' + "Vest Balance: " + response[0].vesting_shares + '</li>');
                 }
                 else {
                     $('#result_zone').prepend('<p><em>' + "That is not a valid username, please use your steem username. " + err + '</em></p>');
                 };
+            });
+
+            muse.api.getWitnessByAccount(username, function(err, response){
+                console.log(err, response);
+                if(response != null) {
+                    $('#UserSteemData').append('<li>' + "Witness ID: " + response.id + '</li>');
+                    $('#UserSteemData').append('<li>' + "Creation Date: " + response.created + '</li>');
+                    $('#UserSteemData').append('<li>' + "Last Confirmed Block: " + response.last_confirmed_block_num + '</li>');
+                    $('#UserSteemData').append('<li>' + "Last MBD Exchange Update: " + response.last_mbd_exchange_update + '</li>');
+                    $('#UserSteemData').append('<li>' + "Total Missed Blocks: " + response.total_missed + '</li>');
+                    $('#UserSteemData').append('<li>' + "Current Announce URL: " + response.url + '</li>');
+                }
+
             });
 
             
@@ -146,7 +152,7 @@
 
                     //first we need to check if each of these user name are real steem usernames and if they are not feed back what ones are not.
 
-                    steem.api.lookupAccountNames([value], function(err, lookupresult) {
+                    muse.api.lookupAccountNames([value], function(err, lookupresult) {
 
                         console.log(err, lookupresult);
 
