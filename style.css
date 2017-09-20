@@ -1,11 +1,10 @@
-#result_zone strong {
-    color: white;
-    background-color: black;
-    padding: 2px;
+img {
+    width:75px;
 }
 body {
+    background-color: black;
     border-style: double;
-
+    color: white;
 }
 #credits {
     color: white;
@@ -16,6 +15,18 @@ body {
     margin: 20px;
     background-color: green;
 }
-img {
-    width:50px;
+
+#result_zone strong {
+    color: white;
+    background-color: black;
+    padding: 2px;
+}
+#banner {
+    
+    margin-top: 5px
+    margin-right: 5px;
+    float:right;
+    text-align: center;
+    color:red;
+
 }
