@@ -27,7 +27,9 @@
 
         <script src="./muse.min.js"></script>
 
-        <script src="./bitsharesjs.min.js"></script>
+        
+
+        <script src="./bitsharesjs-ws.min.js"></script>
     
 
     </head>
@@ -47,6 +49,18 @@
     <br/>
     <p id="credits">Big appreciation to Fabien @adcpm for the steem js library: https://www.npmjs.com/package/steem</p>
         <script>
+
+        bitshares_ws.instance("wss://bitshares.openledger.info/ws", true).init_promise.then((res) => {
+            console.log("connected to:", res[0].network);
+            console.log(res);
+            bitshares_ws.instance().db_api().exec( "set_subscribe_callback", [ updateListener, true ] )
+        });
+
+        function updateListener(object) {
+            console.log("set_subscribe_callback:\n", object);
+        }
+
+        
 
             // The username and activekey is requested, stored in the var username and displayed in the title
             
