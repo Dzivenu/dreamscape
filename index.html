@@ -6,9 +6,9 @@
 
         <div id="banner">
             
-            <h3>DreamScape</h3>
-            <h5>Decentralize Everything</h5>
-            <img src="./artemis.png"></img>
+            <h2>DreamScape</h2>
+            <h3>Decentralize Everything</h3>
+            <img src="./musev2.png"></img>
             
         </div>
             
@@ -27,8 +27,6 @@
 
         <script src="./muse.min.js"></script>
 
-        
-
         <script src="./bitsharesjs-ws.min.js"></script>
     
 
@@ -36,11 +34,6 @@
  
     <body>
         
-        <form action="/" method="post" id="userlist_form">
-            <input type="text" name="message" id="message" placeholder="Something..." size="50" autofocus />
-            
-        </form>
-
         <section id="result_zone">
             
         </section>
@@ -52,14 +45,21 @@
 
         bitshares_ws.instance("wss://bitshares.openledger.info/ws", true).init_promise.then((res) => {
             console.log("connected to:", res[0].network);
-            console.log(res);
+            //console.log(res);
             bitshares_ws.instance().db_api().exec( "set_subscribe_callback", [ updateListener, true ] )
+
+            bitshares_ws.instance().db_api().exec( "subscribe_to_market", [marketListener, "1.3.1627","1.3.0"])
+            
         });
 
         function updateListener(object) {
             console.log("set_subscribe_callback:\n", object);
         }
+        
 
+        function marketListener(object2) {
+                console.log("subscribe_to_market:\n", object);
+        };
         
 
             // The username and activekey is requested, stored in the var username and displayed in the title
@@ -121,33 +121,7 @@
 
             });
 
-            
-            
-            // When the form is fired, the results are validated and then displayed on the page.
-            $('#userlist_form').submit(function () {
-
-                //Message is the list of users that will be sent to, it is a comma seperated list with no spaces.
-
-                var message = $('#message').val();
-
-                //amount is the amount of steem to send to every user.
-
-                var amount = $('#amount').val();
-
-                //memo is the message to attach to the transaction.
-
-                var memo = $('#memo').val();
-
-                //because it is possible to send both sbd and steem we need to specify that we want to send steem in the transaction.
-
-                var TOKEN = " STEEM";
-
-                //here we display on the screen all of the input that was just fired in an uncompressed format.
-
-                //this is likely extreneous and can be removed in the future, but it is good for debugging for the time being.
-
-
-                insertMessage(username, message, amount, memo);
+                //insertMessage(username, message, amount, memo);
                 // Empties the input forms and puts the focus back on the message input field.
                 $('#amount').val('');
                 $('#memo').val('');
@@ -155,43 +129,43 @@
 
                 //here we set up our list of users and split it based on the commas.
 
-                var userdispersallist = message.split(',');
+                //var userdispersallist = message.split(',');
 
                 //here we iterate over the list of users and perform our needed ops.
                 
-                $.each(userdispersallist, function (index, value){
+                //$.each(userdispersallist, function (index, value){
                     /*steem.broadcast.transfer(activekey, username, "steemstars-gtc", "1.000 STEEM", "testing", function(err,   result) {
                     console.log(err, result);
                     });*/
 
                     //first we need to check if each of these user name are real steem usernames and if they are not feed back what ones are not.
 
-                    muse.api.lookupAccountNames([value], function(err, lookupresult) {
+                //     muse.api.lookupAccountNames([value], function(err, lookupresult) {
 
-                        console.log(err, lookupresult);
+                //         console.log(err, lookupresult);
 
-                        //once we get a response on the user we can move on and fire the transaction.
+                //         //once we get a response on the user we can move on and fire the transaction.
                         
-                        if(lookupresult[0] != null ) {
+                //         if(lookupresult[0] != null ) {
                             
-                            steem.broadcast.transfer(activekey, username, value, amount.concat(TOKEN), memo, function(err, transferresult) 
-                            {   
-                console.log(activekey, username, value, amount.concat(TOKEN), memo);
-                                console.log(transferresult, err);
+                //             steem.broadcast.transfer(activekey, username, value, amount.concat(TOKEN), memo, function(err, transferresult) 
+                //             {   
+                // console.log(activekey, username, value, amount.concat(TOKEN), memo);
+                //                 console.log(transferresult, err);
 
-                                //drop all of the info on each transaction into the window so that we can see the results.
+                //                 //drop all of the info on each transaction into the window so that we can see the results.
                                 
-                                $('#result_zone').prepend('<p><em>' + value + " " + transferresult + err + '</em></p>');
-                            });
-                        }
-                        else{
-                            $('#result_zone').prepend('<p><em>' + "Something went wrong, likely this username is not real: " + value + err + '</em></p>');
-                        };
-                    });
-                });
+                //                 $('#result_zone').prepend('<p><em>' + value + " " + transferresult + err + '</em></p>');
+                //             });
+                //         }
+                //         else{
+                //             $('#result_zone').prepend('<p><em>' + "Something went wrong, likely this username is not real: " + value + err + '</em></p>');
+                //         };
+                //     });
+                // });
                  // Blocks 'classic' sending of the form
-                return false;
-            });
+                //return false;
+            
             
             
 

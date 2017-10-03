@@ -1,5 +1,5 @@
 img {
-    width:75px;
+    width:125px;
 }
 body {
     background-color: black;
@@ -23,8 +23,8 @@ body {
 }
 #banner {
     
-    margin-top: 5px
-    margin-right: 5px;
+    margin-top: 5px;
+    margin-right: 10px;
     float:right;
     text-align: center;
     color:red;
